@@ -1,0 +1,33 @@
+Tôi cần config router như một dự án thực tế.
+
+--- PHÂN QUYỀN ---
+- Có 3 role: admin, manager, user
+- Có thể về sau sẽ có một số page dùng chung cho các role khác nhau nên sẽ cần
+  kiểm tra quyền ở cấp độ component (component-level permission), chưa có ý tưởng
+  cấu hình cụ thể. Ví dụ một bảng show thông tin: user chỉ được xem, manager có
+  thể edit, admin có thể create thêm manager hoặc thêm dữ liệu mới.
+
+--- TOKEN & AUTHENTICATION ---
+- Token được lưu ở localStorage
+- "Token còn hiệu lực" = token tồn tại trong localStorage VÀ chưa hết hạn
+  (kiểm tra bằng cách decode JWT và so sánh field "exp" với thời gian hiện tại)
+- Khi token hết hạn giữa session (đang dùng mà expire): tự động logout và
+  redirect về trang login
+
+--- ROUTE PROTECTION ---
+- Chỉ có trang login là public, các trang khác không thể vào nếu chưa login
+
++ Khi truy cập URL bất kì mà chưa login hoặc token hết hạn:
+  → Redirect về trang login, đồng thời lưu lại URL gốc
+
++ Sau khi login thành công:
+  → Redirect về URL gốc đã lưu (nếu có), hoặc về trang mặc định theo role
+
++ Nếu đã login và token còn hiệu lực mà truy cập trang /login:
+  → Redirect thẳng về trang chủ theo role (không cho vào lại trang login)
+
++ Nếu đã login và token còn hiệu lực mà truy cập URL bất kì thuộc đúng role:
+  → Vào thẳng URL đó
+
++ Nếu đã login nhưng truy cập URL không thuộc role của mình:
+  → Redirect về trang chủ theo role hiện tại (không báo lỗi 403)
