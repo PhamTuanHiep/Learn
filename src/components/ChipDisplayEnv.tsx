@@ -1,7 +1,6 @@
 import { Chip } from "@mui/material"
 
 const ChipDisplayEnv = () => {
-    const mockText="mock"
     const apiUrl = import.meta.env.VITE_API_URL;
     return (
         <Chip
